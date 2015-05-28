@@ -1,5 +1,50 @@
 var arDrone = require('ar-drone');
 var client = arDrone.createClient();
+var keybindings = require('./keybindings');
+
+function log(msg) {
+    process.stdout.write(msg + '\n');
+}
+
+keybindings.on('kill', function () {
+    log('Killing process...');
+    process.exit();
+});
+
+keybindings.on('reset', function () {
+    log('Resetting device...');
+    client.disableEmergency();
+});
+
+keybindings.on('keydown', function (key) {
+    if (key == 't') {
+        log('Taking off...');
+        client.takeoff();
+    } else if (key == 'l') {
+        log('Landing...');
+        client.land();
+    } else if (key == 'up') {
+        log('Going up...');
+        client.up(1);
+    } else if (key == 'down') {
+        log('Going down...');
+        client.down(1);
+    }
+});
+
+keybindings.on('keyup', function (key) {
+    if (key == 'up') {
+        log('Not going up...');
+        client.up(0);
+    } else if (key == 'down') {
+        log('Not going down...');
+        client.down(0);
+    }
+});
+
+keybindings.init();
+
+/*
 
 var keypress = require('keypress');
 keypress(process.stdin);
@@ -51,34 +96,4 @@ process.stdin.on('keypress', function (ch, key) {
         process.exit();
     }
 });
-/*
-client.takeoff();
-client
-    .after(4000, function () {
-        this.animate('flipLeft', 1000);
-    })
-    .after(4000, function () {
-        this.animate('phiDance', 5000);
-    })
-    .after(6000, function () {
-        this.up(0.3);
-    })
-    .after(4000, function () {
-        this.stop();
-    })
-    .after(2000, function () {
-        this.animate('flipAhead', 1000);
-    })
-    .after(4000, function () {
-        this.down(0.3);
-    })
-    .after(2000, function () {
-        this.stop();
-    })
-    .after(4000, function () {
-        this.animate('yawDance', 3000);
-    })
-    .after(5000, function () {
-        this.land();
-    });
 */
