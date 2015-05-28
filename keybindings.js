@@ -17,11 +17,12 @@ function handleKeypress(ch, key) {
             keybindings.emit('reset');
         }
     } else {
-        if (!keys[ch]) {
-            keys[ch] = true;
-            keybindings.emit('keydown', ch);
+        var name = (key && key.name) ? key.name : ch;
+        if (!keys[name]) {
+            keys[name] = true;
+            keybindings.emit('keydown', name);
         }
-        logs[ch] = Date.now();
+        logs[name] = Date.now();
     }
 }
 

@@ -11,8 +11,17 @@ var sequences = {
         var control = arDrone.createUdpControl();
         var start = Date.now();
 
-        var ref = { emergency: true };
+        var ref = {};
         var pcmd = {};
+
+        log('sequence one');
+
+        var interval = setInterval(function () {
+            console.log('here');
+            control.ref(ref);
+            control.pcmd(pcmd);
+            control.flush();
+        }, 30);
 
         setTimeout(function () {
             ref.emergency = false;
@@ -22,23 +31,21 @@ var sequences = {
         setTimeout(function () {
             pcmd.front = 0.5;
             pcmd.left = 1;
-        }, 2000);
+        }, 6000);
 
         setTimeout(function () {
             pcmd.left = 0;
             pcmd.right = 1;
-        }, 3000);
+        }, 8000);
 
         setTimeout(function () {
             ref.fly = false;
             pcmd = {};
-        }, 6000);
-
-        var interval = setInterval(function () {
-            control.ref(ref);
-            control.pcmd(pcmd);
-            control.flush();
-        }, 30);
+            setTimeout(function () {
+                clearInterval(interval);
+                cb();
+            });
+        }, 12000);
     }
 };
 
@@ -78,8 +85,9 @@ keybindings.on('keydown', function (key) {
     } else if (key == 'd') {
         client.right(1);
     } else if (key == '1') {
-        console.log(key);
-        sequences.one();
+        sequences.one(function () {
+            log('Sequence complete...');
+        });
     }
 });
 
