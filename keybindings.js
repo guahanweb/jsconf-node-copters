@@ -8,8 +8,8 @@ process.stdin.setRawMode(true);
 var logs = {};
 var keys = {};
 
-function handleKeypress(key) {
-    if (key.ctrl) {
+function handleKeypress(ch, key) {
+    if (key && key.ctrl) {
         if (key.name == 'c') {
             process.stdin.resume();
             keybindings.emit('kill');
@@ -17,21 +17,21 @@ function handleKeypress(key) {
             keybindings.emit('reset');
         }
     } else {
-        if (!keys[key.name]) {
-            keys[key.name] = true;
-            keybindings.emit('keydown', key.name);
+        if (!keys[ch]) {
+            keys[ch] = true;
+            keybindings.emit('keydown', ch);
         }
-        logs[key.name] = Date.now();
+        logs[ch] = Date.now();
     }
 }
 
 var delay = 500;
 function handlePoll() {
-    Object.keys(keys).forEach(function (key) {
-        if (keys[key] && logs[key] < (Date.now() - delay)) {
-            keybindings.emit('keyup', key);
-            delete keys[key];
-            delete logs[key];
+    Object.keys(keys).forEach(function (ch) {
+        if (keys[ch] && logs[ch] < (Date.now() - delay)) {
+            keybindings.emit('keyup', ch);
+            delete keys[ch];
+            delete logs[ch];
         }
     });
 }
@@ -50,7 +50,7 @@ Keybindings.prototype.stop = function () {
 
 keybindings = new Keybindings();
 process.stdin.on('keypress', function (ch, key) {
-    handleKeypress(key);
+    handleKeypress(ch, key);
 });
 
 module.exports = keybindings;
