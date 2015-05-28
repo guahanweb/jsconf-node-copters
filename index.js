@@ -6,6 +6,8 @@ function log(msg) {
     process.stdout.write(msg + '\n');
 }
 
+client.config('control:altitude_max', 3000);
+
 var sequences = {
     'one': function (cb) {
         var control = arDrone.createUdpControl();
